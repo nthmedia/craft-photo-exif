@@ -30,13 +30,18 @@ class Coordinates extends Field
     // Public Properties
     // =========================================================================
 
-    /**
-     * @var string
-     */
-    public $coordinates = '';
+    public $coordinates = null;
 
     // Static Methods
     // =========================================================================
+
+    /**
+     * @inheritdoc
+     */
+    public static function hasContentColumn (): bool
+    {
+        return true;
+    }
 
     /**
      * @inheritdoc
@@ -49,17 +54,17 @@ class Coordinates extends Field
     // Public Methods
     // =========================================================================
 
-    /**
-     * @inheritdoc
-     */
-    public function rules()
+    public function getElementValidationRules(): array
     {
-        $rules = parent::rules();
-        $rules = array_merge($rules, [
-            ['coordinates', 'string'],
-            ['coordinates', 'default', 'value' => ''],
-        ]);
-        return $rules;
+        return [
+            ['string'],
+            [
+                'match',
+                'pattern' => '/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/',
+                'message' => Craft::t('photo-exif', 'Coordinates are incorrectly formatted. (Correct: 12.34,56.78)')
+            ], // https://stackoverflow.com/a/18690202/9405801
+            ['default', 'value' => ''],
+        ];
     }
 
     /**
@@ -83,21 +88,9 @@ class Coordinates extends Field
      */
     public function serializeValue($value, ElementInterface $element = null)
     {
+        // Replace spaces in the string
+        $value = str_replace(' ', '', $value);
         return parent::serializeValue($value, $element);
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function getSettingsHtml()
-    {
-        // Render the settings template
-        return Craft::$app->getView()->renderTemplate(
-            'photo-exif/_components/fields/Coordinates_settings',
-            [
-                'field' => $this,
-            ]
-        );
     }
 
     /**
@@ -105,9 +98,6 @@ class Coordinates extends Field
      */
     public function getInputHtml($value, ElementInterface $element = null): string
     {
-        // Register our asset bundle
-        Craft::$app->getView()->registerAssetBundle(CoordinatesFieldAsset::class);
-
         // Get our id and namespace
         $id = Craft::$app->getView()->formatInputId($this->handle);
         $namespacedId = Craft::$app->getView()->namespaceInputId($id);
@@ -119,6 +109,7 @@ class Coordinates extends Field
             'namespace' => $namespacedId,
             'prefix' => Craft::$app->getView()->namespaceInputId(''),
             ];
+
         $jsonVars = Json::encode($jsonVars);
         Craft::$app->getView()->registerJs("$('#{$namespacedId}-field').PhotoExifCoordinates(" . $jsonVars . ");");
 
@@ -134,4 +125,14 @@ class Coordinates extends Field
             ]
         );
     }
+
+
+    /**
+     * @inheritdoc
+     */
+    public function getTableAttributeHtml($value, ElementInterface $element): string
+    {
+        return 'AA';
+    }
+
 }

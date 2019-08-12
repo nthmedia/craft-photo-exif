@@ -10,7 +10,9 @@
 
 namespace nthmedia\photoexif;
 
+use craft\base\Element;
 use craft\elements\Asset;
+use craft\events\RegisterElementTableAttributesEvent;
 use nthmedia\photoexif\services\Metadata as MetadataService;
 use nthmedia\photoexif\twigextensions\PhotoExifTwigExtension;
 use nthmedia\photoexif\fields\Coordinates as CoordinatesField;
@@ -73,6 +75,41 @@ class PhotoExif extends Plugin
         );
 
         Event::on(
+            Asset::class,
+            Element::EVENT_REGISTER_TABLE_ATTRIBUTES,
+            function(RegisterElementTableAttributesEvent  $event) {
+                $event->tableAttributes['coordinates'] = [
+                    'label' => \Craft::t('photo-exif', 'Coordinates')
+                ];
+            }
+        );
+
+        Event::on(
+            Asset::class,
+            Element::EVENT_SET_TABLE_ATTRIBUTE_HTML,
+            function(craft\events\SetElementTableAttributeHtmlEvent $event) {
+                if($event->attribute === 'coordinates') {
+                    $event->html = '';
+
+                    $fieldLayout = $event->sender->getFieldLayout();
+
+                    if ($fieldLayout) {
+                        $fields = $fieldLayout->getFields();
+
+                        // Find the 'Coordinates' fields
+                        $fields = array_filter($fields, function ($field) {
+                            return get_class($field) === 'nthmedia\photoexif\fields\Coordinates';
+                        });
+
+                        if ($event->sender->{current($fields)->handle}) {
+                            $event->html = $event->sender->{current($fields)->handle};
+                        }
+                    }
+                }
+            }
+        );
+
+        Event::on(
             Plugins::class,
             Plugins::EVENT_AFTER_INSTALL_PLUGIN,
             function (PluginEvent $event) {
@@ -83,11 +120,10 @@ class PhotoExif extends Plugin
 
         Event::on(
             Asset::class,
-            Asset::EVENT_BEFORE_SAVE,
+            Asset::EVENT_BEFORE_VALIDATE,
             function ($event) {
                 if ($event->sender->kind === 'image') {
-                    $imagePath = $event->sender->tempFilePath;
-
+                    $imagePath = $event->sender->tempFilePath ?? $event->sender->getImageTransformSourcePath();
                     if (exif_imagetype($imagePath)) {
                         $exif = @exif_read_data($imagePath);
 
@@ -110,7 +146,9 @@ class PhotoExif extends Plugin
                             });
 
                             array_walk($fields, function ($field) use ($event, $latitude, $longitude) {
-                                $event->sender->{$field['handle']} = $latitude . "," . $longitude;
+                                if ($event->sender->{$field['handle']} === null) {
+                                    $event->sender->{$field['handle']} = $latitude . "," . $longitude;
+                                }
                             }, $fields);
                         }
                     }
@@ -131,6 +169,9 @@ class PhotoExif extends Plugin
     // Protected Methods
     // =========================================================================
 
+    /*
+     * Found in https://stackoverflow.com/a/2572991/9405801
+     */
     protected function getGps($exifCoord, $hemi) {
 
         $degrees = count($exifCoord) > 0 ? $this->gps2Num($exifCoord[0]) : 0;
@@ -143,6 +184,9 @@ class PhotoExif extends Plugin
 
     }
 
+    /*
+     * Found in https://stackoverflow.com/a/2572991/9405801
+     */
     protected function gps2Num($coordPart) {
 
         $parts = explode('/', $coordPart);

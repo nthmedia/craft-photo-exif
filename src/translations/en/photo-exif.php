@@ -15,4 +15,5 @@
  */
 return [
     'Photo EXIF plugin loaded' => 'Photo EXIF plugin loaded',
+    'Coordinates are incorrectly formatted. (Correct: 12.34,56.78)' => 'Coordinates are incorrectly formatted. (Correct: 12.34,56.78)',
 ];
