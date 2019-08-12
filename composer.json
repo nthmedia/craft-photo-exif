@@ -1,0 +1,43 @@
+{
+    "name": "nthmedia/photo-exif",
+    "description": "The plugin reads EXIF data from photos",
+    "type": "craft-plugin",
+    "version": "0.0.1",
+    "keywords": [
+        "craft",
+        "cms",
+        "craftcms",
+        "craft-plugin",
+        "photo exif"
+    ],
+    "support": {
+        "docs": "???",
+        "issues": "???"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "NTH media",
+            "homepage": "https://nthmedia.nl"
+        }
+    ],
+    "require": {
+        "craftcms/cms": "^3.0.0-RC1"
+    },
+    "autoload": {
+        "psr-4": {
+          "nthmedia\\photoexif\\": "src/"
+        }
+    },
+    "extra": {
+        "name": "Photo EXIF",
+        "handle": "photo-exif",
+        "hasCpSettings": false,
+        "hasCpSection": false,
+        "changelogUrl": "???",
+        "components": {
+            "metadata": "nthmedia\\photoexif\\services\\Metadata"
+        },
+        "class": "nthmedia\\photoexif\\PhotoExif"
+    }
+}

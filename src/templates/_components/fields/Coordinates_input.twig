@@ -1,0 +1,22 @@
+{# @var craft \craft\web\twig\variables\CraftVariable #}
+{#
+/**
+ * Photo EXIF plugin for Craft CMS 3.x
+ *
+ * Coordinates Field Input
+ *
+ * @author    NTH media
+ * @copyright Copyright (c) 2019 NTH media
+ * @link      https://nthmedia.nl
+ * @package   PhotoExif
+ * @since     1.0.0
+ */
+#}
+
+{% import "_includes/forms" as forms %}
+
+{{ forms.text({
+        id: name,
+        name: name,
+        value: value})
+}}
