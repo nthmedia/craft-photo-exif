@@ -10,6 +10,7 @@
 
 namespace nthmedia\photoexif\fields;
 
+use craft\helpers\Html;
 use nthmedia\photoexif\PhotoExif;
 use nthmedia\photoexif\assetbundles\coordinatesfield\CoordinatesFieldAsset;
 
@@ -25,7 +26,7 @@ use craft\helpers\Json;
  * @package   PhotoExif
  * @since     1.0.0
  */
-class Coordinates extends Field
+class Coordinates extends Field implements \craft\base\PreviewableFieldInterface
 {
     // Public Properties
     // =========================================================================
@@ -132,7 +133,23 @@ class Coordinates extends Field
      */
     public function getTableAttributeHtml($value, ElementInterface $element): string
     {
-        return 'AA';
+        if ($value) {
+            $value = preg_replace_callback(
+                '/^([-+]?([1-8]?\d(\.\d+))?|90(\.0+)?),\s*([-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+))?)$/',
+                function ($matches) {
+                    $roundedCoordinates = number_format( (float) $matches[1], 4, '.', '');
+                    $roundedCoordinates .= ', ' . number_format( (float) $matches[5], 4, '.', '');
+
+                    return Html::a(
+                        $roundedCoordinates,
+                        'https://www.google.com/maps?q=' . $matches[0],
+                        ['target' => '_blank']
+                    );
+                }, $value);
+
+            return $value;
+        }
+        return '';
     }
 
 }

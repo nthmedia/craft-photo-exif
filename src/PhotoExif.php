@@ -75,41 +75,6 @@ class PhotoExif extends Plugin
         );
 
         Event::on(
-            Asset::class,
-            Element::EVENT_REGISTER_TABLE_ATTRIBUTES,
-            function(RegisterElementTableAttributesEvent  $event) {
-                $event->tableAttributes['coordinates'] = [
-                    'label' => \Craft::t('photo-exif', 'Coordinates')
-                ];
-            }
-        );
-
-        Event::on(
-            Asset::class,
-            Element::EVENT_SET_TABLE_ATTRIBUTE_HTML,
-            function(craft\events\SetElementTableAttributeHtmlEvent $event) {
-                if($event->attribute === 'coordinates') {
-                    $event->html = '';
-
-                    $fieldLayout = $event->sender->getFieldLayout();
-
-                    if ($fieldLayout) {
-                        $fields = $fieldLayout->getFields();
-
-                        // Find the 'Coordinates' fields
-                        $fields = array_filter($fields, function ($field) {
-                            return get_class($field) === 'nthmedia\photoexif\fields\Coordinates';
-                        });
-
-                        if ($event->sender->{current($fields)->handle}) {
-                            $event->html = $event->sender->{current($fields)->handle};
-                        }
-                    }
-                }
-            }
-        );
-
-        Event::on(
             Plugins::class,
             Plugins::EVENT_AFTER_INSTALL_PLUGIN,
             function (PluginEvent $event) {
