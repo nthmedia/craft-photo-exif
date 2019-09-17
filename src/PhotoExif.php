@@ -96,6 +96,19 @@ class PhotoExif extends Plugin
                             return;
                         }
 
+                        $requiredFields = [
+                            'GPSLatitude',
+                            'GPSLatitudeRef',
+                            'GPSLongitude',
+                            'GPSLongitudeRef'
+                        ];
+
+                        foreach ($requiredFields as $requiredField) {
+                            if (!in_array($requiredField, array_keys($exif))) {
+                                return;
+                            }
+                        }
+
                         // Rewrite latitude and longitude from array
                         $latitude = $this->getGps($exif["GPSLatitude"], $exif['GPSLatitudeRef']);
                         $longitude = $this->getGps($exif["GPSLongitude"], $exif['GPSLongitudeRef']);
