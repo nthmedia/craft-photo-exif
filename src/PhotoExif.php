@@ -10,19 +10,17 @@
 
 namespace nthmedia\photoexif;
 
-use craft\base\Element;
-use craft\elements\Asset;
-use craft\events\RegisterElementTableAttributesEvent;
-use nthmedia\photoexif\services\Metadata as MetadataService;
-use nthmedia\photoexif\twigextensions\PhotoExifTwigExtension;
-use nthmedia\photoexif\fields\Coordinates as CoordinatesField;
-
 use Craft;
 use craft\base\Plugin;
-use craft\services\Plugins;
+use craft\elements\Asset;
 use craft\events\PluginEvent;
-use craft\services\Fields;
+
 use craft\events\RegisterComponentTypesEvent;
+use craft\services\Fields;
+use craft\services\Plugins;
+use nthmedia\photoexif\fields\Coordinates as CoordinatesField;
+use nthmedia\photoexif\services\Metadata as MetadataService;
+use nthmedia\photoexif\twigextensions\PhotoExifTwigExtension;
 
 use yii\base\Event;
 
@@ -69,7 +67,7 @@ class PhotoExif extends Plugin
         Event::on(
             Fields::class,
             Fields::EVENT_REGISTER_FIELD_TYPES,
-            function (RegisterComponentTypesEvent $event) {
+            function(RegisterComponentTypesEvent $event) {
                 $event->types[] = CoordinatesField::class;
             }
         );
@@ -77,7 +75,7 @@ class PhotoExif extends Plugin
         Event::on(
             Plugins::class,
             Plugins::EVENT_AFTER_INSTALL_PLUGIN,
-            function (PluginEvent $event) {
+            function(PluginEvent $event) {
                 if ($event->plugin === $this) {
                 }
             }
@@ -86,7 +84,7 @@ class PhotoExif extends Plugin
         Event::on(
             Asset::class,
             Asset::EVENT_BEFORE_VALIDATE,
-            function ($event) {
+            function($event) {
                 if ($event->sender->kind === 'image') {
                     $imagePath = $event->sender->tempFilePath ?? $event->sender->getImageTransformSourcePath();
                     if (exif_imagetype($imagePath)) {
@@ -100,7 +98,7 @@ class PhotoExif extends Plugin
                             'GPSLatitude',
                             'GPSLatitudeRef',
                             'GPSLongitude',
-                            'GPSLongitudeRef'
+                            'GPSLongitudeRef',
                         ];
 
                         foreach ($requiredFields as $requiredField) {
@@ -119,11 +117,11 @@ class PhotoExif extends Plugin
                             $fields = $fieldLayout->getFields();
 
                             // Find the 'Coordinates' fields
-                            $fields = array_filter($fields, function ($field) {
+                            $fields = array_filter($fields, function($field) {
                                 return get_class($field) === 'nthmedia\photoexif\fields\Coordinates';
                             });
 
-                            array_walk($fields, function ($field) use ($event, $latitude, $longitude) {
+                            array_walk($fields, function($field) use ($event, $latitude, $longitude) {
                                 if ($event->sender->{$field['handle']} === null) {
                                     $event->sender->{$field['handle']} = $latitude . "," . $longitude;
                                 }
@@ -150,8 +148,8 @@ class PhotoExif extends Plugin
     /*
      * Found in https://stackoverflow.com/a/2572991/9405801
      */
-    protected function getGps($exifCoord, $hemi) {
-
+    protected function getGps($exifCoord, $hemi)
+    {
         $degrees = count($exifCoord) > 0 ? $this->gps2Num($exifCoord[0]) : 0;
         $minutes = count($exifCoord) > 1 ? $this->gps2Num($exifCoord[1]) : 0;
         $seconds = count($exifCoord) > 2 ? $this->gps2Num($exifCoord[2]) : 0;
@@ -159,23 +157,23 @@ class PhotoExif extends Plugin
         $flip = ($hemi == 'W' or $hemi == 'S') ? -1 : 1;
 
         return $flip * ($degrees + $minutes / 60 + $seconds / 3600);
-
     }
 
     /*
      * Found in https://stackoverflow.com/a/2572991/9405801
      */
-    protected function gps2Num($coordPart) {
-
+    protected function gps2Num($coordPart)
+    {
         $parts = explode('/', $coordPart);
 
-        if (count($parts) <= 0)
+        if (count($parts) === 0) {
             return 0;
+        }
 
-        if (count($parts) == 1)
+        if (count($parts) === 1) {
             return $parts[0];
+        }
 
-        return floatval($parts[0]) / floatval($parts[1]);
+        return (float)$parts[0] / (float)$parts[1];
     }
-
 }

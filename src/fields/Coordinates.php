@@ -10,16 +10,14 @@
 
 namespace nthmedia\photoexif\fields;
 
-use craft\helpers\Html;
-use nthmedia\photoexif\PhotoExif;
-use nthmedia\photoexif\assetbundles\coordinatesfield\CoordinatesFieldAsset;
-
 use Craft;
 use craft\base\ElementInterface;
+
 use craft\base\Field;
-use craft\helpers\Db;
-use yii\db\Schema;
+use craft\helpers\Html;
 use craft\helpers\Json;
+use nthmedia\photoexif\PhotoExif;
+use yii\db\Schema;
 
 /**
  * @author    NTH media
@@ -39,7 +37,7 @@ class Coordinates extends Field implements \craft\base\PreviewableFieldInterface
     /**
      * @inheritdoc
      */
-    public static function hasContentColumn (): bool
+    public static function hasContentColumn(): bool
     {
         return true;
     }
@@ -62,7 +60,7 @@ class Coordinates extends Field implements \craft\base\PreviewableFieldInterface
             [
                 'match',
                 'pattern' => '/^[-+]?([1-8]?\d(\.\d+)?|90(\.0+)?),\s*[-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+)?)$/',
-                'message' => Craft::t('photo-exif', 'Coordinates are incorrectly formatted. (Correct: 12.34,56.78)')
+                'message' => Craft::t('photo-exif', 'Coordinates are incorrectly formatted. (Correct: 12.34,56.78)'),
             ], // https://stackoverflow.com/a/18690202/9405801
             ['default', 'value' => ''],
         ];
@@ -136,9 +134,9 @@ class Coordinates extends Field implements \craft\base\PreviewableFieldInterface
         if ($value) {
             $value = preg_replace_callback(
                 '/^([-+]?([1-8]?\d(\.\d+))?|90(\.0+)?),\s*([-+]?(180(\.0+)?|((1[0-7]\d)|([1-9]?\d))(\.\d+))?)$/',
-                function ($matches) {
-                    $roundedCoordinates = number_format( (float) $matches[1], 4, '.', '');
-                    $roundedCoordinates .= ', ' . number_format( (float) $matches[5], 4, '.', '');
+                function($matches) {
+                    $roundedCoordinates = number_format((float) $matches[1], 4, '.', '');
+                    $roundedCoordinates .= ', ' . number_format((float) $matches[5], 4, '.', '');
 
                     return Html::a(
                         $roundedCoordinates,
@@ -151,5 +149,4 @@ class Coordinates extends Field implements \craft\base\PreviewableFieldInterface
         }
         return '';
     }
-
 }

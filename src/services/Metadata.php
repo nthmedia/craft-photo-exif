@@ -10,10 +10,9 @@
 
 namespace nthmedia\photoexif\services;
 
-use nthmedia\photoexif\PhotoExif;
-
-use Craft;
 use craft\base\Component;
+
+use nthmedia\photoexif\PhotoExif;
 
 /**
  * @author    NTH media

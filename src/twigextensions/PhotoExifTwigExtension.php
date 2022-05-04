@@ -12,8 +12,6 @@ namespace nthmedia\photoexif\twigextensions;
 
 use nthmedia\photoexif\PhotoExif;
 
-use Craft;
-
 /**
  * @author    NTH media
  * @package   PhotoExif
