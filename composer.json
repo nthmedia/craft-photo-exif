@@ -2,7 +2,7 @@
     "name": "nthmedia/photo-exif",
     "description": "The plugin reads EXIF data from photos",
     "type": "craft-plugin",
-    "version": "0.0.1",
+    "version": "2.0",
     "keywords": [
         "craft",
         "cms",
@@ -10,10 +10,6 @@
         "craft-plugin",
         "photo exif"
     ],
-    "support": {
-        "docs": "???",
-        "issues": "???"
-    },
     "license": "MIT",
     "authors": [
         {
@@ -22,7 +18,8 @@
         }
     ],
     "require": {
-        "craftcms/cms": "^3.0.0-RC1"
+        "php": "^8.0",
+        "craftcms/cms": "^4.0"
     },
     "autoload": {
         "psr-4": {
@@ -39,5 +36,18 @@
             "metadata": "nthmedia\\photoexif\\services\\Metadata"
         },
         "class": "nthmedia\\photoexif\\PhotoExif"
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require-dev": {
+        "craftcms/rector": "dev-main",
+        "craftcms/ecs": "dev-main",
+        "phpstan/phpstan": "^1.6"
+    },
+    "config": {
+        "allow-plugins": {
+            "yiisoft/yii2-composer": true,
+            "craftcms/plugin-installer": true
+        }
     }
 }

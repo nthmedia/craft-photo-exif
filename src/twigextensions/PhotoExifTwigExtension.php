@@ -19,7 +19,7 @@ use Craft;
  * @package   PhotoExif
  * @since     1.0.0
  */
-class PhotoExifTwigExtension extends \Twig_Extension
+class PhotoExifTwigExtension extends \Twig\Extension\AbstractExtension
 {
     // Public Methods
     // =========================================================================
@@ -38,7 +38,7 @@ class PhotoExifTwigExtension extends \Twig_Extension
     public function getFilters()
     {
         return [
-            new \Twig_SimpleFilter('someFilter', [$this, 'someInternalFunction']),
+            new \Twig\TwigFilter('someFilter', [$this, 'someInternalFunction']),
         ];
     }
 
@@ -48,7 +48,7 @@ class PhotoExifTwigExtension extends \Twig_Extension
     public function getFunctions()
     {
         return [
-            new \Twig_SimpleFunction('someFunction', [$this, 'someInternalFunction']),
+            new \Twig\TwigFunction('someFunction', [$this, 'someInternalFunction']),
         ];
     }
 

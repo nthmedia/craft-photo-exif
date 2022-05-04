@@ -71,7 +71,7 @@ class Coordinates extends Field implements \craft\base\PreviewableFieldInterface
     /**
      * @inheritdoc
      */
-    public function getContentColumnType(): string
+    public function getContentColumnType(): array|string
     {
         return Schema::TYPE_STRING;
     }
@@ -79,7 +79,7 @@ class Coordinates extends Field implements \craft\base\PreviewableFieldInterface
     /**
      * @inheritdoc
      */
-    public function normalizeValue($value, ElementInterface $element = null)
+    public function normalizeValue(mixed $value, ?\craft\base\ElementInterface $element = null): mixed
     {
         return $value;
     }
@@ -87,7 +87,7 @@ class Coordinates extends Field implements \craft\base\PreviewableFieldInterface
     /**
      * @inheritdoc
      */
-    public function serializeValue($value, ElementInterface $element = null)
+    public function serializeValue(mixed $value, ?\craft\base\ElementInterface $element = null): mixed
     {
         // Replace spaces in the string
         $value = str_replace(' ', '', $value);
@@ -97,7 +97,7 @@ class Coordinates extends Field implements \craft\base\PreviewableFieldInterface
     /**
      * @inheritdoc
      */
-    public function getInputHtml($value, ElementInterface $element = null): string
+    public function getInputHtml(mixed $value, ?\craft\base\ElementInterface $element = null): string
     {
         // Get our id and namespace
         $id = Craft::$app->getView()->formatInputId($this->handle);
@@ -131,7 +131,7 @@ class Coordinates extends Field implements \craft\base\PreviewableFieldInterface
     /**
      * @inheritdoc
      */
-    public function getTableAttributeHtml($value, ElementInterface $element): string
+    public function getTableAttributeHtml(mixed $value, ElementInterface $element): string
     {
         if ($value) {
             $value = preg_replace_callback(
